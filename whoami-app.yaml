@@ -1,0 +1,75 @@
+# whoami-public-app.yaml
+# Ce fichier unique contient tout ce dont Argo CD a besoin pour déployer l'application
+# et la rendre découvrable par votre Traefik externe.
+
+# --- 1. Le Déploiement de l'application ---
+# Crée les pods qui font tourner notre application de test.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # Nous déployons dans le namespace "default" pour simplifier.
+  namespace: default
+  name: whoami-public
+  labels:
+    app: whoami-public
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: whoami-public
+  template:
+    metadata:
+      labels:
+        app: whoami-public
+    spec:
+      containers:
+      - name: whoami
+        image: traefik/whoami:v1.10
+        ports:
+        - name: web
+          containerPort: 80
+
+---
+# --- 2. Le Service (de type ClusterIP) ---
+# Fournit une adresse IP et un nom DNS *internes* au cluster.
+# C'est la cible que Traefik cherchera.
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: default
+  name: whoami-public-svc
+spec:
+  # Le type ClusterIP est le défaut, donc pas besoin de le spécifier.
+  # Ce service n'est PAS accessible depuis l'extérieur du cluster directement.
+  selector:
+    app: whoami-public
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+
+---
+# --- 3. L'Ingress (la "carte" pour Traefik) ---
+# Cet objet donne les instructions à votre Traefik sur le VPS.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: default
+  name: whoami-public-ingress
+spec:
+  # Important : correspond à la classe que votre Traefik externe surveille.
+  ingressClassName: public
+  rules:
+  # Règle n°1 : pour le trafic arrivant avec ce nom d'hôte...
+  - host: whoami.noricam.fr
+    http:
+      paths:
+      # ...et pour n'importe quel chemin...
+      - path: /
+        pathType: Prefix
+        # ...envoie-le vers notre service interne.
+        backend:
+          service:
+            name: whoami-public-svc
+            port:
+              number: 80
