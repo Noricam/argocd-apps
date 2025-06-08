@@ -39,8 +39,7 @@ metadata:
   namespace: default
   name: whoami-public-svc
 spec:
-  # Le type ClusterIP est le défaut, donc pas besoin de le spécifier.
-  # Ce service n'est PAS accessible depuis l'extérieur du cluster directement.
+  type: LoadBalancer
   selector:
     app: whoami-public
   ports:
