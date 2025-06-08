@@ -56,9 +56,10 @@ kind: Ingress
 metadata:
   namespace: default
   name: whoami-public-ingress
-  annotations:
-    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
 spec:
+  tls:
+    - hosts:
+        - whoami.noricam.fr
   # Important : correspond à la classe que votre Traefik externe surveille.
   ingressClassName: public
   rules:
