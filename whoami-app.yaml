@@ -39,7 +39,7 @@ metadata:
   namespace: default
   name: whoami-public-svc
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: whoami-public
   ports:
@@ -55,11 +55,9 @@ kind: Ingress
 metadata:
   namespace: default
   name: whoami-public-ingress
-  annotations:
-    traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
   # Important : correspond à la classe que votre Traefik externe surveille.
-  ingressClassName: public
+  ingressClassName: private
   rules:
   # Règle n°1 : pour le trafic arrivant avec ce nom d'hôte...
   - host: whoami.noricam.fr
