@@ -158,7 +158,7 @@ kind: Deployment
 metadata:
   name: frontend-deployment
 spec:
-  replicas: 1 # Vous pouvez augmenter ce nombre
+  replicas: 1
   selector:
     matchLabels:
       app: frontend
@@ -169,7 +169,26 @@ spec:
     spec:
       containers:
         - name: frontend
-          # IMPORTANT: Remplacez noaduchiron
           image: noaduchiron/test-app-frontend:1.0
           ports:
             - containerPort: 80
+
+---
+# Ingress pour exposer le frontend à l'extérieur du cluster
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+spec:
+  ingressClassName: private
+  rules:
+    - host: test-app.nori
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
