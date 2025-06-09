@@ -29,12 +29,16 @@ metadata:
 data:
   init.sql: |
     CREATE TABLE IF NOT EXISTS items (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(50) NOT NULL
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    description TEXT
     );
     -- Vider la table avant d'insérer pour éviter les doublons lors des redémarrages
     TRUNCATE TABLE items;
-    INSERT INTO items (name) VALUES ('Item Alpha'), ('Item Bravo'), ('Item Charlie');
+    INSERT INTO items (name, description) VALUES 
+        ('Item Alpha', 'Description détaillée de l''item Alpha'),
+        ('Item Bravo', 'Description détaillée de l''item Bravo'),
+        ('Item Charlie', 'Description détaillée de l''item Charlie');
 
 ---
 # Service pour exposer la base de données à l'intérieur du cluster
