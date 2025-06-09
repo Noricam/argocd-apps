@@ -42,10 +42,11 @@ spec:
 ---
 # Déploiement de la base de données PostgreSQL
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: postgres-deployment
+  name: postgres-statefulset
 spec:
+  serviceName: "postgres-db-service"
   replicas: 1
   selector:
     matchLabels:
@@ -63,6 +64,8 @@ spec:
           env:
             - name: POSTGRES_DB
               value: "testdb"
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
@@ -74,12 +77,22 @@ spec:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
           volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
             - name: init-script
               mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: init-script
           configMap:
             name: postgres-init-script
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
 
 ---
 # --- API (Backend) ---
@@ -119,7 +132,6 @@ spec:
           ports:
             - containerPort: 5001
           env:
-            # Passe les informations de connexion à la BDD à l'API
             - name: DB_HOST
               value: "postgres-db-service" # Nom du service de la BDD
             - name: POSTGRES_DB
