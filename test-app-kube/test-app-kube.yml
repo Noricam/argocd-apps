@@ -197,7 +197,7 @@ metadata:
   name: frontend-deployment
   namespace: test-app
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: frontend
