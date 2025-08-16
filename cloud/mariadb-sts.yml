@@ -1,0 +1,25 @@
+---
+# cloud/mariadb-sts.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata: { name: mariadb, namespace: cloud }
+spec:
+  serviceName: mariadb
+  replicas: 1
+  selector: { matchLabels: { app: mariadb } }
+  template:
+    metadata: { labels: { app: mariadb } }
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb:11
+          envFrom: [{ secretRef: { name: mariadb-secrets } }]
+          ports: [{ containerPort: 3306, name: mysql }]
+          volumeMounts: [{ name: data, mountPath: /var/lib/mysql }]
+          args: ["--innodb-buffer-pool-size=256M","--transaction-isolation=READ-COMMITTED"]
+  volumeClaimTemplates:
+    - metadata: { name: data }
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources: { requests: { storage: 10Gi } }
+        storageClassName: local_path

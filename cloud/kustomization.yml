@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yml
+  - pv-4tb.yml
+  - pvc-4tb.yml
+  - samba-deploy.yml
+  - mariadb-svc.yml
+  - mariadb-sts.yml
+  - nextcloud-pvc.yml
+  - nextcloud-deploy.yml
+  - nextcloud-svc.yml
+  - nextcloud-ingress.yml

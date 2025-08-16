@@ -1,0 +1,12 @@
+---
+# cloud/pvc-4tb.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-noricam-4tb
+  namespace: cloud
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources: { requests: { storage: 4Ti } }
+  storageClassName: ""
+  volumeName: pv-noricam-4tb

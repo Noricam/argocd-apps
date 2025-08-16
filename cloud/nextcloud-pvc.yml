@@ -1,0 +1,8 @@
+# cloud/nextcloud-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: nextcloud-data, namespace: cloud }
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources: { requests: { storage: 20Gi } }
+  storageClassName: local_path

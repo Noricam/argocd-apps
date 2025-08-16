@@ -1,0 +1,9 @@
+# cloud/mariadb-svc.yaml
+apiVersion: v1
+kind: Service
+metadata: { name: mariadb, namespace: cloud }
+spec:
+  clusterIP: None
+  selector: { app: mariadb }
+  ports: [{ name: mysql, port: 3306, targetPort: 3306 }]
+

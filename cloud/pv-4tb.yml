@@ -1,0 +1,21 @@
+# cloud/pv-4tb.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-noricam-4tb
+spec:
+  capacity: { storage: 4Ti }
+  volumeMode: Filesystem
+  accessModes: ["ReadWriteOnce"]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values: ["talos-7jb-641"]
+  hostPath:
+    path: /var/mnt/mass-data
+    type: DirectoryOrCreate
